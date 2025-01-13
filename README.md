@@ -28,6 +28,8 @@ How to progress the project
 
 # Notes
 
+- Matrix multiply works by Matrix A being column-major and Matrix B being row-major. Simply changing operations on Matrix B to also be column-major by loading it in as it's transpose. We can see a performance improvement from `5.469s` of runtime to `4.081s`
+- Since we're using test data we can pretend that Matrix B is a transpose instead of paying the cost of rearranging the data when loading from file
 - All bash files execute relative to themselves with the `cd "$(dirname "$0")"` command
 - Test files are generated instead of stored in the repo
 - The matrix generator uses numpy but could use something else
