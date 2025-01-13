@@ -6,10 +6,10 @@ The goal of this project is to evaluate the automatic and manual simd features a
 
 Below is a table of the results from checking https://godbolt.org/
 
-| lang/compiler/target | automatically?     | manually?       |
----------------------------------------------------------------
-| c/gcc/arm            | :heavy_check_mark: | :question_mark: |
-| c/clang/arm          | :heavy_check_mark: | :question_mark: |
+| lang    | compiler | target | automatically?     | manually?       |
+| ------- | -------- | ------ | ------------------ | --------------- |
+| c       | gcc      | arm    | :heavy_check_mark: | ?               |
+| c       | clang    | arm    | :heavy_check_mark: | ?               |
 
 ## What algorithm are we testing?
 
