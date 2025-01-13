@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
         fscanf(file_a, "%f", &matrix_a[j * dim_a_x + i]);
       else
         fscanf(file_a, ",%f", &matrix_a[j * dim_a_x + i]);
-      printf("%.2f ", matrix_a[j * dim_a_x + i]);
+      printf("%0.f ", matrix_a[j * dim_a_x + i]);
     }
     printf("\n");
   }
@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
         fscanf(file_b, "%f", &matrix_b[j * dim_b_x + i]);
       else
         fscanf(file_b, ",%f", &matrix_b[j * dim_b_x + i]);
-      printf("%.2f ", matrix_b[j * dim_b_x + i]);
+      printf("%0.f ", matrix_b[j * dim_b_x + i]);
     }
     printf("\n");
   }
@@ -80,15 +80,15 @@ int main(int argc, char *argv[]) {
     for (int i = 0; i < dim_b_x; i++) {
       result[j * dim_a_y + i] = 0;
       for (int k = 0; k < dim_a_x; k++) {
-        printf("\nresult[%d][%d] += [%d][%d] %f * [%d][%d] %f\n", j, i, j, k,
-               matrix_a[j * dim_a_x + k], k, i, matrix_b[k * dim_b_x + i]);
-        result[j * dim_a_x + i] +=
-            matrix_a[j * dim_a_x + k] * matrix_b[k * dim_b_x + i];
+        const float a = matrix_a[j * dim_a_x + k];
+        const float b = matrix_b[k * dim_b_x + i];
+        result[j * dim_b_x + i] += a * b;
+        printf("result[%d][%d] %0.f += [%d][%d] %0.f * [%d][%d] %0.f\n", j, i,
+               result[j * dim_a_y + i], j, k, a, k, i, b);
         total_operations++;
       }
-      printf("%.2f ", result[j * dim_a_x + i]);
+      printf("\n");
     }
-    printf("\n");
   }
 #undef printf
   printf("Dimensions Result: %d %d\n", dim_a_y, dim_b_x);
@@ -104,9 +104,9 @@ int main(int argc, char *argv[]) {
   for (int j = 0; j < dim_a_y; j++) {
     for (int i = 0; i < dim_b_x; i++) {
       if (i == 0)
-        fprintf(file_result, "%f", result[j * dim_a_x + i]);
+        fprintf(file_result, "%0.f", result[j * dim_b_x + i]);
       else
-        fprintf(file_result, ",%f", result[j * dim_a_x + i]);
+        fprintf(file_result, ",%0.f", result[j * dim_b_x + i]);
     }
     fprintf(file_result, "\n");
   }
