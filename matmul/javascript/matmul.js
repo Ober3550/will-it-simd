@@ -1,25 +1,37 @@
 const fs = require("fs");
 
 let total_operations = 0;
-function matmul(a, b) {
-  if (a[0].length != b.length) {
+function matmul(matrix_a, matrix_b_transpose) {
+  if (matrix_a[0].length != matrix_b_transpose.length) {
     console.log("Matrix dimensions do not match");
     return undefined;
   }
   const result = [];
-  for (let i = 0; i < a.length; i++) {
+  for (let i = 0; i < matrix_a.length; i++) {
     const row = [];
-    for (let j = 0; j < b[0].length; j++) {
+    for (let j = 0; j < matrix_b_transpose[0].length; j++) {
       let sum = 0;
-      for (let k = 0; k < a[0].length; k++) {
-        sum += a[i][k] * b[k][j];
+      for (let k = 0; k < matrix_a[0].length; k++) {
+        sum += matrix_a[i][k] * matrix_b_transpose[j][k];
         total_operations++;
       }
       row.push(sum);
     }
-    result.push(row);
+    result.push(Float32Array.from(row));
   }
   return result;
+}
+
+function transpose(matrix) {
+  for (let j = 0; j < matrix.length; j++) {
+    for (let i = 0; i < matrix[0].length; i++) {
+      if (i < j) {
+        const temp = matrix[i][j];
+        matrix[i][j] = matrix[j][i];
+        matrix[j][i] = temp;
+      }
+    }
+  }
 }
 
 function readFile(filename) {
@@ -108,6 +120,10 @@ async function main(filename_a, filename_b, filename_result) {
   const matrix_b = await readFile(filename_b);
   const end_read = new Date();
   console.log("Read time:", end_read - start_read, "ms");
+  const start_transpose = new Date();
+  transpose(matrix_b);
+  const end_transpose = new Date();
+  console.log("Transpose time:", end_transpose - start_transpose, "ms");
   const start_matmul = new Date();
   const result = matmul(matrix_a, matrix_b);
   const end_matmul = new Date();
