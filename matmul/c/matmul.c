@@ -1,5 +1,5 @@
-// Write a C program to load an arbitrary size matrix from two files and
-// multiply them together The output will be written to a third file
+// A C program to load an arbitrary size matrix from two files multiply them and
+// store the result in a third file
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -80,15 +80,17 @@ int main(int argc, char *argv[]) {
     for (int i = 0; i < dim_b_x; i++) {
       result[j * dim_a_y + i] = 0;
       for (int k = 0; k < dim_a_x; k++) {
-        printf("\nresult[%d][%d] += [%d][%d] %f * [%d][%d] %f\n", j, i, j, k, matrix_a[j * dim_a_x + k], k, i, matrix_b[k * dim_b_x + i]);
-        result[j * dim_a_x + i] += matrix_a[j * dim_a_x + k] * matrix_b[k * dim_b_x + i];
+        printf("\nresult[%d][%d] += [%d][%d] %f * [%d][%d] %f\n", j, i, j, k,
+               matrix_a[j * dim_a_x + k], k, i, matrix_b[k * dim_b_x + i]);
+        result[j * dim_a_x + i] +=
+            matrix_a[j * dim_a_x + k] * matrix_b[k * dim_b_x + i];
         total_operations++;
       }
       printf("%.2f ", result[j * dim_a_x + i]);
     }
     printf("\n");
   }
-  #undef printf
+#undef printf
   printf("Dimensions Result: %d %d\n", dim_a_y, dim_b_x);
   printf("Total operations: %ld\n", total_operations);
 

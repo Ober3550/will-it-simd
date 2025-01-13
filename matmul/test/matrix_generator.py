@@ -5,7 +5,7 @@ import sys
 name = sys.argv[1]
 size = int(sys.argv[2])
 
-# Generate a 256x256 matrix with random floating point numbers
+# Generate a nxn matrix with random floating point numbers
 matrix = np.random.rand(size, size)
 
 # Define the file path
