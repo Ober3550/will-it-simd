@@ -2,6 +2,7 @@
 // store the result in a third file
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 // Disable printf for performance
 #define printf(...) (0)
@@ -17,6 +18,7 @@ int main(int argc, char *argv[]) {
   }
 #pragma pop_macro("printf")
   // Get the filenames for io
+  clock_t start_read = clock();
   printf("Filename A: %s\n", argv[1]);
   printf("Filename B: %s\n", argv[2]);
   char *filename_result = argv[3];
@@ -66,6 +68,11 @@ int main(int argc, char *argv[]) {
   }
   fclose(file_a);
   fclose(file_b);
+  clock_t end_read = clock();
+#pragma push_macro("printf")
+#undef printf
+  printf("Read time: %.0f ms\n", 1000.0 * (double)(end_read - start_read) / CLOCKS_PER_SEC);
+#pragma pop_macro("printf")
 
   // Check if the matrices are valid
   if (dim_a_x != dim_b_y) {
@@ -94,6 +101,7 @@ int main(int argc, char *argv[]) {
   printf("Dimensions Result: %d %d\n", dim_a_y, dim_b_x);
   printf("Total operations: %ld\n", total_operations);
 
+  clock_t start_write = clock();
   // Store the result
   FILE *file_result = fopen(filename_result, "w");
   if (file_result == NULL) {
@@ -110,5 +118,9 @@ int main(int argc, char *argv[]) {
     }
     fprintf(file_result, "\n");
   }
+  fclose(file_result);
+  clock_t end_write = clock();
+  printf("Write time: %.0f ms\n",
+         1000.0 * (double)(end_write - start_write) / CLOCKS_PER_SEC);
   return 0;
 }

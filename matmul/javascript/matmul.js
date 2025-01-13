@@ -102,11 +102,19 @@ function writeFile(filename, matrix) {
 }
 
 async function main(filename_a, filename_b, filename_result) {
+  const start_read = new Date();
+  console.log("Reading files");
   const matrix_a = await readFile(filename_a);
   const matrix_b = await readFile(filename_b);
+  const end_read = new Date();
+  console.log("Read Time:", end_read - start_read, "ms");
   const result = matmul(matrix_a, matrix_b);
   if (result != undefined) {
+    const start_write = new Date();
+    console.log("Writing file");
     await writeFile(filename_result, result);
+    const end_write = new Date();
+    console.log("Write Time:", end_write - start_write, "ms");
   }
 }
 

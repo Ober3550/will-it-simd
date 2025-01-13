@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 # Generate test data
-size=1500
+size=2000
 ./matmul/test/generate_test_data.sh $size
 
 #! /usr/bin/env bash
