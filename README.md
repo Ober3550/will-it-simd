@@ -7,11 +7,14 @@ The goal of this project is to evaluate the automatic and manual simd features a
 Below is a table of the results from checking https://godbolt.org/
 Timing information is on the order O(n^3) with n=2000.
 
-| lang       | compiler | target | automatically?     | manually?       | read time | run time  | write time |
-|------------|----------|--------|--------------------|-----------------|-----------|-----------|------------|
-| c          | gcc      | arm    | :heavy_check_mark: | ?               |    1.047s |   10.276s |     0.477s |
-| c          | clang    | arm    | :heavy_check_mark: | ?               |    1.047s |   10.339s |     0.482s |
-| javascript | node     | arm    | ?                  | ?               |    2.690s | 1m19.664s |     3.737s |
+| lang compiler target feature      |      will it simd? | read time | run time  | write time |
+|-----------------------------------|--------------------|-----------|-----------|------------|
+| c gcc arm                         | :heavy_check_mark: |    1.030s |   10.082s |     0.481s |
+| c clang arm                       | :heavy_check_mark: |    1.033s |    9.772s |     0.461s |
+| javascript node arm               |                  ? |    2.649s | 1m17.776s |     3.057s |
+| javascript node arm float32 array |                  ? |    2.649s |   41.204s |     3.057s |
+| javascript bun arm                |                  ? |    2.619s |   47.482s |    13.546s |
+| javascript bun arm float32 array  |                  ? |    2.619s |   47.482s |    13.546s |
 
 ## What algorithm are we testing?
 
@@ -37,3 +40,4 @@ How to progress the project
 - The matrix generator uses numpy but could use something else
 - Try and make the bash files install relevant dependencies to run each test
 - Try and include logging for debugging and validation but have a way to disable for running algorithm so we're not testing streaming data to terminal
+- It seems like there's a bug with bun write streams because it's performance is very poor. However, I noticed that the performance of bun was the same if you used a regular javascript array or a specific float32 array. Perhaps bun is auto casting to native when it sees arrays full of the same data type?

@@ -74,6 +74,7 @@ int main(int argc, char *argv[]) {
   printf("Read time: %.0f ms\n", 1000.0 * (double)(end_read - start_read) / CLOCKS_PER_SEC);
 #pragma pop_macro("printf")
 
+  clock_t start_mul = clock();
   // Check if the matrices are valid
   if (dim_a_x != dim_b_y) {
     printf("Cannot multiply matrices\n");
@@ -97,8 +98,11 @@ int main(int argc, char *argv[]) {
       printf("\n");
     }
   }
+  clock_t end_mul = clock();
 #undef printf
-  printf("Dimensions Result: %d %d\n", dim_a_y, dim_b_x);
+  printf("Matmul time: %.0f ms\n",
+         1000.0 * (double)(end_mul - start_mul) / CLOCKS_PER_SEC);
+  printf("Result dimensions: %d %d\n", dim_a_y, dim_b_x);
   printf("Total operations: %ld\n", total_operations);
 
   clock_t start_write = clock();

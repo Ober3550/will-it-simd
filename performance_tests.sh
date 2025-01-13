@@ -17,7 +17,7 @@ for target in "${targets[@]}"; do
   fi
   if [[ -f "$target/run.sh" ]]; then
     echo "Running $target"
-    time "$target/run.sh" ../test/matrix_a_"$size".csv ../test/matrix_b_"$size".csv ../test/result.csv
+    "$target/run.sh" ../test/matrix_a_"$size".csv ../test/matrix_b_"$size".csv ../test/result.csv
     echo
   fi
 done

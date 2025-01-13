@@ -45,7 +45,7 @@ function readFile(filename) {
             dim_y = parseFloat(character_buffer);
           } else {
             row.push(parseFloat(character_buffer));
-            matrix.push(row);
+            matrix.push(Float32Array.from(row));
             row = [];
           }
           character_buffer = "";
@@ -62,7 +62,7 @@ function readFile(filename) {
         row.push(parseFloat(character_buffer));
       }
       if (row.length > 0) {
-        matrix.push(row);
+        matrix.push(Float32Array.from(row));
       }
       resolve(matrix);
     });
@@ -75,8 +75,8 @@ function writeFile(filename, matrix) {
     filestream.on("ready", () => {
       const dim_x = matrix[0].length;
       const dim_y = matrix.length;
-      console.log("Dimensions Result:", dim_x, dim_y);
-      console.log("Total Operations:", total_operations);
+      console.log("Result dimensions:", dim_x, dim_y);
+      console.log("Total operations:", total_operations);
       filestream.write(dim_x.toString());
       filestream.write(",");
       filestream.write(dim_y.toString());
@@ -107,14 +107,17 @@ async function main(filename_a, filename_b, filename_result) {
   const matrix_a = await readFile(filename_a);
   const matrix_b = await readFile(filename_b);
   const end_read = new Date();
-  console.log("Read Time:", end_read - start_read, "ms");
+  console.log("Read time:", end_read - start_read, "ms");
+  const start_matmul = new Date();
   const result = matmul(matrix_a, matrix_b);
+  const end_matmul = new Date();
+  console.log("Matmul time:", end_matmul - start_matmul, "ms");
   if (result != undefined) {
     const start_write = new Date();
     console.log("Writing file");
     await writeFile(filename_result, result);
     const end_write = new Date();
-    console.log("Write Time:", end_write - start_write, "ms");
+    console.log("Write time:", end_write - start_write, "ms");
   }
 }
 
