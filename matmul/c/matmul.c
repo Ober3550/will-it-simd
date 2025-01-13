@@ -4,125 +4,122 @@
 #include <stdlib.h>
 #include <time.h>
 
-// Disable printf for performance
-#define printf(...) (0)
-
-int main(int argc, char *argv[]) {
-// If we generate large enough matrices the performance of reading the file
-// header won't matter
-#pragma push_macro("printf")
-#undef printf
-  if (argc != 4) {
-    printf("Usage: %s <matrix_a.csv> <matrix_b.csv> <output.csv>\n", argv[0]);
-    exit(1);
-  }
-#pragma pop_macro("printf")
-  // Get the filenames for io
-  clock_t start_read = clock();
-  printf("Filename A: %s\n", argv[1]);
-  printf("Filename B: %s\n", argv[2]);
-  char *filename_result = argv[3];
-  printf("Filename Result: %s\n", filename_result);
-  FILE *file_a = fopen(argv[1], "r");
-  if (file_a == NULL) {
-    printf("Error opening file: %s\n", argv[1]);
-    exit(1);
-  }
-  FILE *file_b = fopen(argv[2], "r");
-  if (file_b == NULL) {
-    printf("Error opening file: %s\n", argv[2]);
-    exit(1);
-  }
-
-  // Read the dimensions of the matrices
-  int dim_a_x, dim_a_y, dim_b_x, dim_b_y;
-  fscanf(file_a, "%d,%d", &dim_a_x, &dim_a_y);
-  printf("Dimensions A: %d, %d\n", dim_a_x, dim_a_y);
-  fscanf(file_b, "%d,%d", &dim_b_x, &dim_b_y);
-  printf("Dimensions B: %d, %d\n", dim_b_x, dim_b_y);
-
-  // Load the matrix data
-  printf("Matrix A:\n");
-  float *matrix_a = malloc(dim_a_y * dim_a_x * sizeof(float));
-  for (int j = 0; j < dim_a_y; j++) {
-    for (int i = 0; i < dim_a_x; i++) {
-      if (i == 0)
-        fscanf(file_a, "%f", &matrix_a[j * dim_a_x + i]);
-      else
-        fscanf(file_a, ",%f", &matrix_a[j * dim_a_x + i]);
-      printf("%0.f ", matrix_a[j * dim_a_x + i]);
-    }
-    printf("\n");
-  }
-  printf("Matrix B:\n");
-  float *matrix_b = malloc(dim_b_y * dim_b_x * sizeof(float));
-  for (int j = 0; j < dim_b_y; j++) {
-    for (int i = 0; i < dim_b_x; i++) {
-      if (i == 0)
-        fscanf(file_b, "%f", &matrix_b[j * dim_b_x + i]);
-      else
-        fscanf(file_b, ",%f", &matrix_b[j * dim_b_x + i]);
-      printf("%0.f ", matrix_b[j * dim_b_x + i]);
-    }
-    printf("\n");
-  }
-  fclose(file_a);
-  fclose(file_b);
-  clock_t end_read = clock();
-#pragma push_macro("printf")
-#undef printf
-  printf("Read time: %.0f ms\n", 1000.0 * (double)(end_read - start_read) / CLOCKS_PER_SEC);
-#pragma pop_macro("printf")
-
-  clock_t start_mul = clock();
-  // Check if the matrices are valid
-  if (dim_a_x != dim_b_y) {
-    printf("Cannot multiply matrices\n");
-    exit(1);
-  }
-
-  // Multiply the matrices
+long int matrix_multiply(float *matrix_a, int dim_a_x, int dim_a_y,
+                         float *matrix_b_transpose, int dim_b_x, int dim_b_y,
+                         float *result) {
   long int total_operations = 0;
-  float *result = malloc(dim_a_y * dim_b_x * sizeof(float));
   for (int j = 0; j < dim_a_y; j++) {
     for (int i = 0; i < dim_b_x; i++) {
       result[j * dim_a_y + i] = 0;
       for (int k = 0; k < dim_a_x; k++) {
         const float a = matrix_a[j * dim_a_x + k];
-        const float b = matrix_b[k * dim_b_x + i];
-        result[j * dim_b_x + i] += a * b;
-        printf("result[%d][%d] %0.f += [%d][%d] %0.f * [%d][%d] %0.f\n", j, i,
-               result[j * dim_a_y + i], j, k, a, k, i, b);
+        const float b = matrix_b_transpose[i * dim_b_y + k];
+        result[j * dim_a_y + i] += a * b;
+        // printf("result[%d][%d] %0.f += [%d][%d] %0.f * [%d][%d] %0.f\n", j, i,
+        //        result[j * dim_a_y + i], j, k, a, i, k, b);
         total_operations++;
       }
-      printf("\n");
+      // printf("\n");
     }
   }
+  return total_operations;
+}
+
+// Transpose of non-square matrices is non-trivial
+void matrix_transpose(float *matrix, int dim_x, int dim_y) {
+  for (int i = 1; i < dim_x; i++) {
+    /* stop the inner loop when b == a */
+    for (int j = 0; j < i; j++) {
+      int tmp = matrix[j * dim_y + i];
+      matrix[j * dim_y + i] = matrix[i * dim_y + j];
+      matrix[i * dim_y + j] = tmp;
+    }
+  }
+}
+
+float *read_matrix(char *filename, int *dim_x, int *dim_y) {
+  FILE *file = fopen(filename, "r");
+  if (file == NULL) {
+    printf("Error opening file: %s\n", filename);
+    exit(1);
+  }
+  fscanf(file, "%d,%d", dim_x, dim_y);
+  float *matrix = malloc(*dim_y * *dim_x * sizeof(float));
+  for (int j = 0; j < *dim_y; j++) {
+    for (int i = 0; i < *dim_x; i++) {
+      if (i == 0)
+        fscanf(file, "%f", &matrix[j * *dim_x + i]);
+      else
+        fscanf(file, ",%f", &matrix[j * *dim_x + i]);
+    }
+  }
+  fclose(file);
+  return matrix;
+}
+
+void write_matrix(char *filename, float *matrix, int dim_x, int dim_y) {
+  FILE *file = fopen(filename, "w");
+  if (file == NULL) {
+    printf("Error opening file: %s\n", filename);
+    exit(1);
+  }
+  fprintf(file, "%d,%d\n", dim_x, dim_y);
+  for (int j = 0; j < dim_y; j++) {
+    for (int i = 0; i < dim_x; i++) {
+      if (i == 0)
+        fprintf(file, "%0.f", matrix[j * dim_x + i]);
+      else
+        fprintf(file, ",%0.f", matrix[j * dim_x + i]);
+    }
+    fprintf(file, "\n");
+  }
+  fclose(file);
+}
+
+int main(int argc, char *argv[]) {
+  // If we generate large enough matrices the performance of reading the file
+  // header won't matter
+  if (argc != 4) {
+    printf("Usage: %s <matrix_a.csv> <matrix_b.csv> <output.csv>\n", argv[0]);
+    exit(1);
+  }
+
+  // Read the matrices
+  clock_t start_read = clock();
+  int dim_a_x, dim_a_y, dim_b_x, dim_b_y;
+  float *matrix_a = read_matrix(argv[1], &dim_a_x, &dim_a_y);
+  float *matrix_b = read_matrix(argv[2], &dim_b_x, &dim_b_y);
+
+  // Check if the matrices are valid
+  if (dim_a_x != dim_b_y) {
+    printf("Cannot multiply matrices\n");
+    exit(1);
+  }
+  clock_t end_read = clock();
+  printf("Read time: %.0f ms\n",
+         1000.0 * (double)(end_read - start_read) / CLOCKS_PER_SEC);
+
+  // Transpose the second matrix for performance
+  clock_t start_transpose = clock();
+  matrix_transpose(matrix_b, dim_b_x, dim_b_y);
+  clock_t end_transpose = clock();
+  printf("Transpose time: %.0f ms\n",
+         1000.0 * (double)(end_transpose - start_transpose) / CLOCKS_PER_SEC);
+
+  // Multiply the matrices
+  float *result = malloc(dim_a_y * dim_b_x * sizeof(float));
+  clock_t start_mul = clock();
+  long int total_operations = matrix_multiply(
+      matrix_a, dim_a_x, dim_a_y, matrix_b, dim_b_x, dim_b_y, result);
   clock_t end_mul = clock();
-#undef printf
+
+  // Write the result
   printf("Matmul time: %.0f ms\n",
          1000.0 * (double)(end_mul - start_mul) / CLOCKS_PER_SEC);
   printf("Result dimensions: %d %d\n", dim_a_y, dim_b_x);
   printf("Total operations: %ld\n", total_operations);
-
   clock_t start_write = clock();
-  // Store the result
-  FILE *file_result = fopen(filename_result, "w");
-  if (file_result == NULL) {
-    printf("Error opening file: %s\n", filename_result);
-    exit(1);
-  }
-  fprintf(file_result, "%d,%d\n", dim_b_x, dim_a_y);
-  for (int j = 0; j < dim_a_y; j++) {
-    for (int i = 0; i < dim_b_x; i++) {
-      if (i == 0)
-        fprintf(file_result, "%0.f", result[j * dim_b_x + i]);
-      else
-        fprintf(file_result, ",%0.f", result[j * dim_b_x + i]);
-    }
-    fprintf(file_result, "\n");
-  }
-  fclose(file_result);
+  write_matrix(argv[3], result, dim_a_y, dim_b_x);
   clock_t end_write = clock();
   printf("Write time: %.0f ms\n",
          1000.0 * (double)(end_write - start_write) / CLOCKS_PER_SEC);
