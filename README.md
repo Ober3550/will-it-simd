@@ -10,7 +10,9 @@ Timing information is on the order O(n^3) with n=2000.
 | lang compiler target feature      |      will it simd? | read time | run time  | write time |
 |-----------------------------------|--------------------|-----------|-----------|------------|
 | c gcc arm                         | :heavy_check_mark: |    1.030s |   10.082s |     0.481s |
+| c gcc arm transpose               | :heavy_check_mark: |    1.030s |    7.317s |     0.481s |
 | c clang arm                       | :heavy_check_mark: |    1.033s |    9.772s |     0.461s |
+| c clang arm transpose             | :heavy_check_mark: |    1.033s |    7.408s |     0.461s |
 | javascript node arm               |                  ? |    2.649s | 1m17.776s |     3.057s |
 | javascript node arm float32 array |                  ? |    2.649s |   41.204s |     3.057s |
 | javascript bun arm                |                  ? |    2.619s |   47.482s |    13.546s |
