@@ -8,7 +8,7 @@ Below is a table of the results from checking https://godbolt.org/
 Timing information is on the order O(n^3) with n=2000.
 
 | lang       | compiler | target | automatically?     | manually?       | read time | run time  | write time |
-| ---------- | -------- | ------ | ------------------ | --------------- | ---------------------------------- |
+|------------|----------|--------|--------------------|-----------------|-----------|-----------|------------|
 | c          | gcc      | arm    | :heavy_check_mark: | ?               |    1.047s |   10.276s |     0.477s |
 | c          | clang    | arm    | :heavy_check_mark: | ?               |    1.047s |   10.339s |     0.482s |
 | javascript | node     | arm    | ?                  | ?               |    2.690s | 1m19.664s |     3.737s |
