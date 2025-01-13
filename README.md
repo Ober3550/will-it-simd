@@ -12,3 +12,10 @@ How to progress the project
 3. Decide on the common io process (likely byte file read to try avoiding testing json parsers)
 4. Setup a test suite to validate the output
 5. Optimize the language as much as possible
+
+# Notes
+- All bash files execute relative to themselves with the `cd "(dirname $0)` command
+- Test files are generated instead of stored in the repo
+- The matrix generator uses numpy but could use something else
+- Try and make the bash files install relevant dependencies to run each test
+- Try and include logging for debugging and validation but have a way to disable for running algorithm so we're not testing streaming data to terminal

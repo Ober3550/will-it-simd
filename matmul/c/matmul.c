@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
   }
 
   // Multiply the matrices
-  int total_operations = 0;
+  long int total_operations = 0;
   float *result = malloc(dim_a_y * dim_b_x * sizeof(float));
   for (int j = 0; j < dim_a_y; j++) {
     for (int i = 0; i < dim_b_x; i++) {
@@ -90,7 +90,7 @@ int main(int argc, char *argv[]) {
   }
   #undef printf
   printf("Dimensions Result: %d %d\n", dim_a_y, dim_b_x);
-  printf("Total operations: %d\n", total_operations);
+  printf("Total operations: %ld\n", total_operations);
 
   // Store the result
   FILE *file_result = fopen(filename_result, "w");
@@ -102,9 +102,9 @@ int main(int argc, char *argv[]) {
   for (int j = 0; j < dim_a_y; j++) {
     for (int i = 0; i < dim_b_x; i++) {
       if (i == 0)
-        fprintf(file_result, "%.2f", result[j * dim_a_x + i]);
+        fprintf(file_result, "%f", result[j * dim_a_x + i]);
       else
-        fprintf(file_result, ",%.2f", result[j * dim_a_x + i]);
+        fprintf(file_result, ",%f", result[j * dim_a_x + i]);
     }
     fprintf(file_result, "\n");
   }

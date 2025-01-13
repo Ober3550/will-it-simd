@@ -1,13 +1,15 @@
 import numpy as np
 import csv
+import sys
 
-size = 1024
+name = sys.argv[1]
+size = int(sys.argv[2])
 
 # Generate a 256x256 matrix with random floating point numbers
 matrix = np.random.rand(size, size)
 
 # Define the file path
-file_path = f'./matrix_b_{size}.csv'
+file_path = f'./{name}_{size}.csv'
 
 # Write the matrix to a CSV file
 with open(file_path, 'w', newline='') as csvfile:
