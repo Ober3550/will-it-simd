@@ -46,49 +46,63 @@ pub fn trim(str: []const u8) []const u8 {
 pub fn read_matrix(filename: []const u8) !Matrix {
     const file = try std.fs.cwd().openFile(filename, .{});
     defer file.close();
-    var num: [30]u8 = undefined;
-    var num_len: u64 = 0;
     const num_cap: u64 = 30;
+    var num: [num_cap]u8 = undefined;
+    var num_len: u64 = 0;
+    const chunk_cap: u64 = 1024;
+    var chunk: [chunk_cap]u8 = undefined;
+    var chunk_len: u64 = 0;
+    var chunk_num: u64 = 0;
     var row: u32 = 0;
     var col: u32 = 0;
     var first_row = true;
     var dimensions: [2]u32 = undefined;
     var matrix: []f32 = undefined;
-    while (true) {
-        const byte = file.reader().readByte() catch break;
-        if (byte == '\r') {
-            continue;
-        } else if (byte == '\n' or byte == ',') {
-            // std.debug.print("Col: {d} Row: {d} Num: {s}\n", .{ col, row, num[0..num_len] });
-            if (first_row) {
-                dimensions[col] = try std.fmt.parseInt(u32, trim(num[0..num_len]), 0);
-                if (col == 1) {
-                    std.debug.print("Allocating matrix with dimensions: {d}, {d}\n", .{ dimensions[0], dimensions[1] });
-                    matrix = try std.heap.c_allocator.alloc(f32, dimensions[0] * dimensions[1]);
-                    first_row = false;
-                    col = 0;
-                }
-            } else {
-                matrix[row * dimensions[0] + col] = try std.fmt.parseFloat(f32, trim(num[0..num_len]));
-                // Increment row
-                if (byte == '\n') {
-                    col = 0;
-                    row += 1;
-                }
-            }
-            // Increment col
-            if (byte == ',') {
-                col += 1;
-            }
 
-            // Reset num buffer
-            for (num_len..num_cap) |i| {
-                num[i] = 0;
+    while (true) {
+        chunk_len = file.reader().read(&chunk) catch break;
+        if (chunk_len == 0) {
+            break;
+        }
+        // std.debug.print("Chunk num: {d} Chunk len: {d}\n", .{ chunk_num, chunk_len });
+        chunk_num += 1;
+        // const byte = file.reader().readByte() catch break;
+        for (0..chunk_len) |i| {
+            const byte = chunk[i];
+            if (byte == '\r') {
+                continue;
+            } else if (byte == '\n' or byte == ',') {
+                // std.debug.print("Col: {d} Row: {d} Num: {s}\n", .{ col, row, num[0..num_len] });
+                if (first_row) {
+                    dimensions[col] = try std.fmt.parseInt(u32, trim(num[0..num_len]), 0);
+                    if (col == 1) {
+                        std.debug.print("Allocating matrix with dimensions: {d}, {d}\n", .{ dimensions[0], dimensions[1] });
+                        matrix = try std.heap.c_allocator.alloc(f32, dimensions[0] * dimensions[1]);
+                        first_row = false;
+                        col = 0;
+                    }
+                } else {
+                    matrix[row * dimensions[0] + col] = try std.fmt.parseFloat(f32, trim(num[0..num_len]));
+                    // Increment row
+                    if (byte == '\n') {
+                        col = 0;
+                        row += 1;
+                    }
+                }
+                // Increment col
+                if (byte == ',') {
+                    col += 1;
+                }
+
+                // Reset num buffer
+                for (num_len..num_cap) |j| {
+                    num[j] = 0;
+                }
+                num_len = 0;
+            } else if (num_len < num_cap) {
+                num[num_len] = byte;
+                num_len += 1;
             }
-            num_len = 0;
-        } else if (num_len < num_cap) {
-            num[num_len] = byte;
-            num_len += 1;
         }
     }
 
@@ -161,6 +175,7 @@ pub fn main() !void {
     // Skip executable
     _ = argsIterator.next();
 
+    const start_read = std.time.milliTimestamp();
     var matrix_a: Matrix = undefined;
     var matrix_b: Matrix = undefined;
     if (argsIterator.next()) |filename_a| {
@@ -169,11 +184,19 @@ pub fn main() !void {
     if (argsIterator.next()) |filename_b| {
         matrix_b = try read_matrix(filename_b);
     }
+    const end_read = std.time.milliTimestamp();
+    std.debug.print("Read time: {} ms\n", .{end_read - start_read});
     // printMatrix(matrix_a);
     // printMatrix(matrix_b);
+    const start_matmul = std.time.milliTimestamp();
     const matrix_result = try matrix_multiply(matrix_a, matrix_b);
+    const end_matmul = std.time.milliTimestamp();
+    std.debug.print("Matmul time: {} ms\n", .{end_matmul - start_matmul});
     // printMatrix(matrix_result);
     if (argsIterator.next()) |filename_result| {
+        const start_write = std.time.milliTimestamp();
         try writeMatrix(matrix_result, filename_result);
+        const end_write = std.time.milliTimestamp();
+        std.debug.print("Write time: {} ms\n", .{end_write - start_write});
     }
 }
