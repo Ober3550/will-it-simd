@@ -4,10 +4,11 @@
 #include <stdlib.h>
 #include <time.h>
 
-long int matrix_multiply(float *matrix_a, int dim_a_x, int dim_a_y,
-                         float *matrix_b_transpose, int dim_b_x, int dim_b_y,
-                         float *result) {
+void matrix_multiply(float *matrix_a, int dim_a_x, int dim_a_y,
+                     float *matrix_b_transpose, int dim_b_x, int dim_b_y,
+                     float *result) {
   long int total_operations = 0;
+  printf("Result dimensions: %d %d\n", dim_a_y, dim_b_x);
   for (int j = 0; j < dim_a_y; j++) {
     for (int i = 0; i < dim_b_x; i++) {
       result[j * dim_a_y + i] = 0;
@@ -15,14 +16,15 @@ long int matrix_multiply(float *matrix_a, int dim_a_x, int dim_a_y,
         const float a = matrix_a[j * dim_a_x + k];
         const float b = matrix_b_transpose[i * dim_b_y + k];
         result[j * dim_a_y + i] += a * b;
-        // printf("result[%d][%d] %0.f += [%d][%d] %0.f * [%d][%d] %0.f\n", j, i,
+        // printf("result[%d][%d] %0.f += [%d][%d] %0.f * [%d][%d] %0.f\n", j,
+        // i,
         //        result[j * dim_a_y + i], j, k, a, i, k, b);
         total_operations++;
       }
       // printf("\n");
     }
   }
-  return total_operations;
+  printf("Total operations: %ld\n", total_operations);
 }
 
 // Transpose of non-square matrices is non-trivial
@@ -109,15 +111,13 @@ int main(int argc, char *argv[]) {
   // Multiply the matrices
   float *result = malloc(dim_a_y * dim_b_x * sizeof(float));
   clock_t start_mul = clock();
-  long int total_operations = matrix_multiply(
-      matrix_a, dim_a_x, dim_a_y, matrix_b, dim_b_x, dim_b_y, result);
+  matrix_multiply(matrix_a, dim_a_x, dim_a_y, matrix_b, dim_b_x, dim_b_y,
+                  result);
   clock_t end_mul = clock();
 
   // Write the result
   printf("Matmul time: %.0f ms\n",
          1000.0 * (double)(end_mul - start_mul) / CLOCKS_PER_SEC);
-  printf("Result dimensions: %d %d\n", dim_a_y, dim_b_x);
-  printf("Total operations: %ld\n", total_operations);
   clock_t start_write = clock();
   write_matrix(argv[3], result, dim_a_y, dim_b_x);
   clock_t end_write = clock();

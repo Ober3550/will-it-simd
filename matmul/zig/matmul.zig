@@ -7,23 +7,25 @@ const Matrix = struct {
 };
 
 pub fn matrix_multiply(matrix_a: Matrix, matrix_b: Matrix) !Matrix {
+    var total_operations: u64 = 0;
     if (matrix_a.dimensions[1] != matrix_b.dimensions[0]) {
         return MatmulError.IncorrectDimensions;
     }
     const allocator = std.heap.c_allocator;
     const result_dimensions: [2]u32 = [_]u32{ matrix_a.dimensions[0], matrix_b.dimensions[1] };
-    std.debug.print("Allocating result matrix with dimensions: {d}, {d}\n", .{ result_dimensions[0], result_dimensions[1] });
+    std.debug.print("Result dimensions: {d} {d}\n", .{ result_dimensions[0], result_dimensions[1] });
     var result_matrix = try allocator.alloc(f32, result_dimensions[0] * result_dimensions[1]);
     for (0..result_dimensions[0]) |i| {
         for (0..result_dimensions[1]) |j| {
             var sum: f32 = 0.0;
             for (0..matrix_a.dimensions[1]) |k| {
                 sum += matrix_a.data[i * matrix_a.dimensions[0] + k] * matrix_b.data[k * matrix_b.dimensions[0] + j];
+                total_operations += 1;
             }
             result_matrix[i * result_dimensions[0] + j] = sum;
         }
     }
-    std.debug.print("Matrix multiplication done\n", .{});
+    std.debug.print("Total operations: {d}\n", .{total_operations});
     return Matrix{ .dimensions = result_dimensions, .data = result_matrix };
 }
 
@@ -76,7 +78,7 @@ pub fn read_matrix(filename: []const u8) !Matrix {
                 if (first_row) {
                     dimensions[col] = try std.fmt.parseInt(u32, trim(num[0..num_len]), 0);
                     if (col == 1) {
-                        std.debug.print("Allocating matrix with dimensions: {d}, {d}\n", .{ dimensions[0], dimensions[1] });
+                        // std.debug.print("Allocating matrix with dimensions: {d}, {d}\n", .{ dimensions[0], dimensions[1] });
                         matrix = try std.heap.c_allocator.alloc(f32, dimensions[0] * dimensions[1]);
                         first_row = false;
                         col = 0;

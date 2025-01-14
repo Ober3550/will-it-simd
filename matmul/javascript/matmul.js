@@ -1,7 +1,9 @@
 const fs = require("fs");
 
-let total_operations = 0;
+
 function matmul(matrix_a, matrix_b_transpose) {
+  let total_operations = 0;
+  console.log("Result dimensions:", matrix_a.length, matrix_b_transpose.length);
   if (matrix_a[0].length != matrix_b_transpose.length) {
     console.log("Matrix dimensions do not match");
     return undefined;
@@ -19,6 +21,7 @@ function matmul(matrix_a, matrix_b_transpose) {
     }
     result.push(Float32Array.from(row));
   }
+  console.log("Total operations:", total_operations);
   return result;
 }
 
@@ -87,8 +90,6 @@ function writeFile(filename, matrix) {
     filestream.on("ready", () => {
       const dim_x = matrix[0].length;
       const dim_y = matrix.length;
-      console.log("Result dimensions:", dim_x, dim_y);
-      console.log("Total operations:", total_operations);
       filestream.write(dim_x.toString());
       filestream.write(",");
       filestream.write(dim_y.toString());
@@ -115,7 +116,6 @@ function writeFile(filename, matrix) {
 
 async function main(filename_a, filename_b, filename_result) {
   const start_read = new Date();
-  console.log("Reading files");
   const matrix_a = await readFile(filename_a);
   const matrix_b = await readFile(filename_b);
   const end_read = new Date();
