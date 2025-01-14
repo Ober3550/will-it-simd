@@ -1,4 +1,6 @@
 matmul_c
+matmul_zig
+*.o
 
 matrix_a_*.csv
 matrix_b_*.csv

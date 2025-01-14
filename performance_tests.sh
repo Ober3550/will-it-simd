@@ -9,6 +9,9 @@ size=2000
 dir_list="$(ls -d matmul/*)"
 # shellcheck disable=SC2206
 targets=(${dir_list[@]/'matmul/test'/})
+if [[ -n "$1" ]]; then 
+  targets=("matmul/$1")
+fi
 
 for target in "${targets[@]}"; do
   if [[ -f "$target/build.sh" ]]; then
