@@ -7,18 +7,16 @@ The goal of this project is to evaluate the automatic and manual simd features a
 Below is a table of the results from checking https://godbolt.org/
 Timing information is on the order O(n^3) with n=2000.
 
-| lang compiler target feature                |      will it simd? | read time | run time  | write time |
-|---------------------------------------------|--------------------|-----------|-----------|------------|
-| c gcc arm                                   | :heavy_check_mark: |    1.030s |   10.082s |     0.481s |
-| c gcc arm transpose                         | :heavy_check_mark: |    1.030s |    7.317s |     0.481s |
-| c clang arm                                 | :heavy_check_mark: |    1.033s |    9.772s |     0.461s |
-| c clang arm transpose                       | :heavy_check_mark: |    1.033s |    7.408s |     0.461s |
-| zig                                         | :heavy_check_mark: |    0.373s |    7.639s |     0.157s |
-| javascript node arm                         |                  ? |    2.649s | 1m17.776s |     3.057s |
-| javascript node arm float32 array           |                  ? |    2.649s |   41.204s |     3.057s |
-| javascript node arm float32 array transpose |                  ? |    2.858s |   31.733s |     3.316s |
-| javascript bun arm                          |                  ? |    2.619s |   47.482s |    13.546s |
-| javascript bun arm float32 array            |                  ? |    2.619s |   47.482s |    13.546s |
+| lang compiler target feature                |          will it simd? | read time | run time  | write time |
+|---------------------------------------------|------------------------|-----------|-----------|------------|
+| c gcc arm                                   |     :white_check_mark: |    1.030s |   10.082s |     0.481s |
+| c gcc arm transpose                         |     :white_check_mark: |    1.030s |    7.317s |     0.481s |
+| c clang arm                                 |     :white_check_mark: |    1.033s |    9.772s |     0.461s |
+| c clang arm transpose                       |     :white_check_mark: |    1.033s |    7.408s |     0.461s |
+| zig                                         |     :white_check_mark: |    0.373s |    7.639s |     0.157s |
+| javascript node arm                         |                    :x: |    2.649s | 1m17.776s |     3.057s |
+| javascript node arm float32 array           | :large_orange_diamond: |    2.649s |   41.204s |     3.057s |
+| javascript node arm float32 array transpose |     :white_check_mark: |    2.858s |    7.866s |     3.316s |
 
 ## What algorithm are we testing?
 
