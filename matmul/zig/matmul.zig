@@ -68,7 +68,6 @@ pub fn read_matrix(filename: []const u8) !Matrix {
         }
         // std.debug.print("Chunk num: {d} Chunk len: {d}\n", .{ chunk_num, chunk_len });
         chunk_num += 1;
-        // const byte = file.reader().readByte() catch break;
         for (0..chunk_len) |i| {
             const byte = chunk[i];
             if (byte == '\r') {
@@ -107,29 +106,6 @@ pub fn read_matrix(filename: []const u8) !Matrix {
             }
         }
     }
-
-    // var first_line: bool = true;
-    // var row: u32 = 0;
-    // var col: u32 = 0;
-    // const allocator = std.heap.c_allocator;
-    // while (try file.reader().readUntilDelimiterOrEofAlloc(allocator, '\n', 2 ^ 20)) |line| {
-    //     var iterator = std.mem.tokenizeScalar(u8, line, ',');
-    //     if (first_line) {
-    //         const dim_x = trim(iterator.next().?);
-    //         const dim_y = trim(iterator.next().?);
-    //         dimensions[0] = try std.fmt.parseInt(u32, dim_x, 0);
-    //         dimensions[1] = try std.fmt.parseInt(u32, dim_y, 0);
-    //         matrix = try allocator.alloc(f32, dimensions[0] * dimensions[1]);
-    //         first_line = false;
-    //         continue;
-    //     }
-    //     while (iterator.next()) |value| {
-    //         matrix[row * dimensions[0] + col] = try std.fmt.parseFloat(f32, value);
-    //         col += 1;
-    //     }
-    //     col = 0;
-    //     row += 1;
-    // }
     return Matrix{ .dimensions = dimensions, .data = matrix };
 }
 
