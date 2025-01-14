@@ -12,8 +12,9 @@ Timing information is on the order O(n^3) with n=2000.
 | c gcc arm                                   |     :white_check_mark: |    1.030s |   10.082s |     0.481s |
 | c gcc arm transpose                         |     :white_check_mark: |    1.030s |    7.317s |     0.481s |
 | c clang arm                                 |     :white_check_mark: |    1.033s |    9.772s |     0.461s |
-| c clang arm transpose                       |     :white_check_mark: |    1.033s |    7.408s |     0.461s |
+| c clang arm transpose                       |     :white_check_mark: |    1.027s |    7.162s |     0.462s |
 | zig                                         |     :white_check_mark: |    0.373s |    7.639s |     0.157s |
+| zig transpose                               |     :white_check_mark: |    0.365s |    7.161s |     0.162s |
 | javascript node arm                         |                    :x: |    2.649s | 1m17.776s |     3.057s |
 | javascript node arm float32 array           | :large_orange_diamond: |    2.649s |   41.204s |     3.057s |
 | javascript node arm float32 array transpose |     :white_check_mark: |    2.858s |    7.866s |     3.316s |
