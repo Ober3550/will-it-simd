@@ -19,7 +19,7 @@ pub fn matrix_multiply(matrix_a: Matrix, matrix_b: Matrix) !Matrix {
         for (0..result_dimensions[1]) |j| {
             var sum: f32 = 0.0;
             for (0..matrix_a.dimensions[1]) |k| {
-                sum += matrix_a.data[i * matrix_a.dimensions[0] + k] * matrix_b.data[j * matrix_b.dimensions[0] + k];
+                sum += matrix_a.data[i * matrix_a.dimensions[0] + k] * matrix_b.data[k * matrix_b.dimensions[0] + j];
                 total_operations += 1;
             }
             result_matrix[i * result_dimensions[0] + j] = sum;
