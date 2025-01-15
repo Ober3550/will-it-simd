@@ -18,6 +18,7 @@ Timing information is on the order O(n^3) with n=2000.
 | javascript node arm                         |                    :x: |    2.649s | 1m17.776s |     3.057s |
 | javascript node arm float32 array           | :large_orange_diamond: |    2.649s |   41.204s |     3.057s |
 | javascript node arm float32 array transpose |     :white_check_mark: |    2.858s |    7.866s |     3.316s |
+| python                                      |     :white_check_mark: |    1.674s |    0.039s |     0.906s |
 
 ## What algorithm are we testing?
 ### Matrix Multiply O(n^3)

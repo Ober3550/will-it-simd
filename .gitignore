@@ -2,3 +2,4 @@ matmul_c
 matmul_zig
 *.o
 *.csv
+.DS_Store
