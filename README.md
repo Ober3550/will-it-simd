@@ -20,6 +20,7 @@ Timing information is on the order O(n^3) with n=2000.
 | javascript node arm float32 array transpose |     :white_check_mark: |    2.858s |    7.866s |     3.316s |
 
 ## What algorithm are we testing?
+### Matrix Multiply O(n^3)
 
 If we're writing optimized algorithms in each language we may aswell make the implementation we're producing useful. Some useful algorithms we could try is a hashing algorithm, matrix multiply or a flat hashmap.
 
